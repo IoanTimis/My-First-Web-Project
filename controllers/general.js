@@ -106,36 +106,21 @@ const search = async (req, res, next) => {
 
 const searchResults = async (req, res, next) => {
   const { search, maxPrice } = req.query;
-  let searchConditions = {};
-
-  if (search) {
-    searchConditions.name = {
-      [Op.like]: `%${search}%`
-    };
-  }
-
-  // Adaugă condiția pentru `price` doar dacă `maxPrice` nu este 'empty'
-  if (maxPrice && maxPrice !== 'empty') {
-    searchConditions.price = {
-      [Op.lte]: parseFloat(maxPrice)
-    };
-  }
 
   try {
-    const products = await Product.findAll({
-      where: searchConditions
-    });
+    const products = await Product.searchProducts(search, maxPrice);
 
-    if (!products) {
-      // Nu a fost gasit niciun produs
+    if (products.length === 0) {
+      return res.render('pages/search', { products: [], message: 'No products found.' });
     }
-    
+
     res.render('pages/search', { products: products });
   } catch (error) {
     console.error('Error searching products:', error);
     res.status(500).send('Internal Server Error');
   }
 };
+
 
 
 module.exports = {
