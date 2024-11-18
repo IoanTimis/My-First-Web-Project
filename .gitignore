@@ -11,6 +11,9 @@ node_modules
 sessions
 nginx
 
+#Mac OS
+.DS_Store 
+
 #debugg files
 .vscode/launch.json
 
